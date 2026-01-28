@@ -1,0 +1,110 @@
+/**
+ * @file esp_config_opensprinkler.h
+ * @brief Optimized mbedTLS configuration for OpenSprinkler
+ *
+ * This configuration enforces:
+ * - TLS 1.3 ONLY (no TLS 1.2 fallback)
+ * - Hardware-accelerated AES-GCM ciphers only
+ * - Minimal memory footprint
+ * - Maximum security and performance on ESP32-C5
+ */
+
+#ifndef ESP_CONFIG_OPENSPRINKLER_H
+#define ESP_CONFIG_OPENSPRINKLER_H
+
+/* Force TLS 1.3 only - disable all older protocols */
+#define MBEDTLS_SSL_PROTO_TLS1_3
+
+/* Disable TLS 1.2 and older */
+#undef MBEDTLS_SSL_PROTO_TLS1_2
+#undef MBEDTLS_SSL_PROTO_TLS1_1
+#undef MBEDTLS_SSL_PROTO_TLS1_0
+#undef MBEDTLS_SSL_PROTO_SSL3
+#undef MBEDTLS_SSL_PROTO_DTLS
+
+/* Enable only hardware-accelerated AES-GCM cipher suites */
+#define MBEDTLS_GCM_C
+#define MBEDTLS_CIPHER_MODE_GCM
+
+/* Disable all CBC, CCM and other cipher modes */
+#undef MBEDTLS_CIPHER_MODE_CBC
+#undef MBEDTLS_CIPHER_MODE_CFB
+#undef MBEDTLS_CIPHER_MODE_OFB
+#undef MBEDTLS_CIPHER_MODE_CTR
+#undef MBEDTLS_CCM_C
+#undef MBEDTLS_CHACHAPOLY_C
+
+/* Enable only AES (hardware-accelerated on ESP32) */
+#define MBEDTLS_AES_C
+#define MBEDTLS_HARDWARE_AES
+
+/* Disable other ciphers */
+#undef MBEDTLS_DES_C
+#undef MBEDTLS_CAMELLIA_C
+#undef MBEDTLS_ARIA_C
+#undef MBEDTLS_CHACHA20_C
+#undef MBEDTLS_POLY1305_C
+
+/* TLS 1.3 cipher suites - only AES-GCM with hardware acceleration */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+
+/* Disable all TLS 1.2 key exchange methods */
+#undef MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_RSA_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED
+#undef MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
+
+/* Memory optimizations */
+#define MBEDTLS_SSL_MAX_CONTENT_LEN 4096
+#define MBEDTLS_SSL_IN_CONTENT_LEN 4096
+#define MBEDTLS_SSL_OUT_CONTENT_LEN 4096
+
+/* Disable features not needed for TLS 1.3 server */
+#undef MBEDTLS_SSL_RENEGOTIATION
+#undef MBEDTLS_SSL_SESSION_TICKETS
+#undef MBEDTLS_SSL_ENCRYPT_THEN_MAC
+#undef MBEDTLS_SSL_EXTENDED_MASTER_SECRET
+#undef MBEDTLS_SSL_FALLBACK_SCSV
+#undef MBEDTLS_SSL_CBC_RECORD_SPLITTING
+
+/* Enable only what's needed for TLS 1.3 */
+#define MBEDTLS_SSL_ALPN
+#define MBEDTLS_SSL_SERVER_NAME_INDICATION
+
+/* Hardware acceleration (ESP32-C5) */
+#define MBEDTLS_HARDWARE_SHA
+#define MBEDTLS_HARDWARE_ECC
+#define MBEDTLS_HARDWARE_MPI
+
+/* Crypto primitives needed for TLS 1.3 AES-GCM */
+#define MBEDTLS_SHA256_C
+#define MBEDTLS_SHA384_C
+#define MBEDTLS_SHA512_C
+#define MBEDTLS_ECP_C
+#define MBEDTLS_ECDH_C
+#define MBEDTLS_ECDSA_C
+#define MBEDTLS_ECP_DP_SECP256R1_ENABLED
+#define MBEDTLS_ECP_DP_SECP384R1_ENABLED
+
+/* Disable weak/unneeded curves */
+#undef MBEDTLS_ECP_DP_SECP192R1_ENABLED
+#undef MBEDTLS_ECP_DP_SECP224R1_ENABLED
+#undef MBEDTLS_ECP_DP_SECP521R1_ENABLED
+#undef MBEDTLS_ECP_DP_SECP192K1_ENABLED
+#undef MBEDTLS_ECP_DP_SECP224K1_ENABLED
+#undef MBEDTLS_ECP_DP_SECP256K1_ENABLED
+#undef MBEDTLS_ECP_DP_BP256R1_ENABLED
+#undef MBEDTLS_ECP_DP_BP384R1_ENABLED
+#undef MBEDTLS_ECP_DP_BP512R1_ENABLED
+#undef MBEDTLS_ECP_DP_CURVE25519_ENABLED
+#undef MBEDTLS_ECP_DP_CURVE448_ENABLED
+
+#endif /* ESP_CONFIG_OPENSPRINKLER_H */

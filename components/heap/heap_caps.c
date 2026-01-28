@@ -94,7 +94,12 @@ HEAP_IRAM_ATTR void *heap_caps_malloc( size_t size, uint32_t caps)
 
 #define MALLOC_DISABLE_EXTERNAL_ALLOCS -1
 //Dual-use: -1 (=MALLOC_DISABLE_EXTERNAL_ALLOCS) disables allocations in external memory, >=0 sets the limit for allocations preferring internal memory.
-static int malloc_alwaysinternal_limit=MALLOC_DISABLE_EXTERNAL_ALLOCS;
+#ifdef CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL
+// Initialize with configured threshold from sdkconfig (OpenSprinkler: 16 bytes for aggressive SPIRAM usage)
+static int malloc_alwaysinternal_limit = CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL;
+#else
+static int malloc_alwaysinternal_limit = MALLOC_DISABLE_EXTERNAL_ALLOCS;
+#endif
 
 void heap_caps_malloc_extmem_enable(size_t limit)
 {

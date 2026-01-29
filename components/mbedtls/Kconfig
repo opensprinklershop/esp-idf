@@ -1663,4 +1663,30 @@ menu "mbedTLS"
             ROM (ECO1~ECO4) then we shall patch the relevant symbols. This would increase
             the flash footprint and hence care must be taken to keep some reserved space
             for the application binary in flash layout.
+
+    menu "TLS Protocol Versions"
+
+        config MBEDTLS_SSL_PROTO_TLS1_3
+            bool "Enable TLS protocol version 1.3"
+            default n
+            help
+                Enable support for TLS version 1.3 (RFC 8446).
+                TLS 1.3 provides improved security and performance over TLS 1.2.
+                Requires mbedtls v3.6.0 or later.
+
+        config MBEDTLS_SSL_PROTO_TLS1_2
+            bool "Enable TLS protocol version 1.2"
+            default y
+            help
+                Enable support for TLS version 1.2 (RFC 5246).
+                This is the most widely supported TLS version.
+
+        config MBEDTLS_SSL_PROTO_DTLS
+            bool "Enable DTLS protocol"
+            default n
+            help
+                Enable support for Datagram TLS (DTLS) for UDP-based secure communications.
+
+    endmenu  # TLS Protocol Versions
+
 endmenu  # mbedTLS

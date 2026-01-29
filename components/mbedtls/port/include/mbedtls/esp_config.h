@@ -3240,6 +3240,36 @@
 
 /* \} name SECTION: Module configuration options */
 
+/**
+ * \name TLS Protocol Version Support (OpenSprinkler optimizations)
+ * \{
+ */
+
+/* TLS 1.3 Support - enable if CONFIG_MBEDTLS_SSL_PROTO_TLS1_3 is set */
+#ifdef CONFIG_MBEDTLS_SSL_PROTO_TLS1_3
+#define MBEDTLS_SSL_PROTO_TLS1_3
+#else
+#undef MBEDTLS_SSL_PROTO_TLS1_3
+#endif
+
+/* TLS 1.2 Support */
+#ifdef CONFIG_MBEDTLS_SSL_PROTO_TLS1_2
+#define MBEDTLS_SSL_PROTO_TLS1_2
+#else
+#undef MBEDTLS_SSL_PROTO_TLS1_2
+#endif
+
+/* DTLS Support */
+#ifdef CONFIG_MBEDTLS_SSL_PROTO_DTLS
+#define MBEDTLS_SSL_PROTO_DTLS
+#else
+#undef MBEDTLS_SSL_PROTO_DTLS
+#endif
+
+/* \} name TLS Protocol Version Support */
+
+/* \} name SECTION: Module configuration options */
+
 #if defined(TARGET_LIKE_MBED)
 #include "mbedtls/target_config.h"
 #endif

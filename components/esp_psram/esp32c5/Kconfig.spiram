@@ -1,6 +1,6 @@
 config SPIRAM
     bool "Support for external, SPI-connected RAM"
-    default "n"
+    default "y"
     help
         This enables support for an external SPI RAM chip, connected in parallel with the
         main SPI flash chip.
@@ -19,7 +19,7 @@ menu "SPI RAM config"
 
     choice SPIRAM_SPEED
         prompt "Set RAM clock speed"
-        default SPIRAM_SPEED_40M
+        default SPIRAM_SPEED_80M
         help
             Select the speed for the SPI RAM chip.
 

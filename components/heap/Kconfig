@@ -11,8 +11,7 @@ menu "Heap memory debugging"
         help
             Enable heap poisoning features to detect heap corruption caused by out-of-bounds access to heap memory.
 
-            See the "Heap Memory Debugging" page of the IDF documentation
-            for a description of each level of heap corruption detection.
+            OPTIMIZATION: Keep at DISABLED to save flash and heap overhead.
 
         config HEAP_POISONING_DISABLED
             bool "Basic (no poisoning)"
@@ -26,11 +25,8 @@ menu "Heap memory debugging"
         bool "Heap tracing"
         default HEAP_TRACING_OFF
         help
-            Enables the heap tracing API defined in esp_heap_trace.h.
-
-            This function causes a moderate increase in IRAM code side and a minor increase in heap function
-            (malloc/free/realloc) CPU overhead, even when the tracing feature is not used.
-            So it's best to keep it disabled unless tracing is being used.
+            OPTIMIZATION: Keep disabled to save ~2KB of flash.
+            Heap tracing is not necessary for production.
 
         config HEAP_TRACING_OFF
             bool "Disabled"
@@ -98,11 +94,10 @@ menu "Heap memory debugging"
 
     config HEAP_TASK_TRACKING
         bool "Enable heap task tracking"
+        default n
         help
-            Enables tracking the task responsible for each heap allocation.
-
-            Note: Allocating or freeing memory or using the task tracking API will lead to a crash when the
-            scheduler is not working (e.g, after calling vTaskSuspendAll).
+            OPTIMIZATION: Disabled to save memory and CPU overhead.
+            Not needed for production systems.
 
     config HEAP_TRACK_DELETED_TASKS
         bool "Keep information about the memory usage of deleted tasks"

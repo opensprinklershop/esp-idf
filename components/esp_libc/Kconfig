@@ -2,7 +2,6 @@ menu "LibC"
 
     choice LIBC
         prompt "LibC to build application with"
-        default LIBC_NEWLIB if IDF_TOOLCHAIN_CLANG
         default LIBC_PICOLIBC
 
         config LIBC_NEWLIB
@@ -105,7 +104,7 @@ menu "LibC"
 
     config LIBC_NEWLIB_NANO_FORMAT
         bool "Enable 'nano' formatting options for printf/scanf family"
-        default y if IDF_TARGET_ESP32C2
+        default y
         depends on LIBC_NEWLIB
         help
             In most chips the ROM contains parts of newlib C library, including printf/scanf family

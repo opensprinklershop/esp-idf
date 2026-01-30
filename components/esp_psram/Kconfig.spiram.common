@@ -88,7 +88,7 @@ config SPIRAM_MEMTEST
 config SPIRAM_MALLOC_ALWAYSINTERNAL
     int "Maximum malloc() size, in bytes, to always put in internal memory"
     depends on SPIRAM_USE_MALLOC
-    default 16384
+    default 32
     range 0 131072
     help
         If malloc() is capable of also allocating SPI-connected ram, its allocation strategy will prefer to

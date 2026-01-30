@@ -442,7 +442,7 @@ menu "mbedTLS"
 
         config MBEDTLS_CERTIFICATE_BUNDLE
             bool "Enable trusted root certificate bundle"
-            default y
+            default n
             help
                 Enable support for large number of default root certificates
 
@@ -450,6 +450,8 @@ menu "mbedTLS"
                 as customer specific root certificates in compressed format rather
                 than storing full certificate. For the root certificates the public key and the subject name
                 will be stored.
+
+                OPTIMIZATION: Disabled by default to save ~100KB flash for self-signed cert mode.
 
         menu "Certificate Bundle Configuration"
             depends on MBEDTLS_CERTIFICATE_BUNDLE
@@ -526,7 +528,7 @@ menu "mbedTLS"
         default y
         select MBEDTLS_SHA256_C
         select MBEDTLS_MD_C
-        select MBEDTLS_SSL_PROTO_TLS1_2
+        select MBEDTLS_SSL_PROTO_TLS1_3
         help
             Enable support for the TLS protocol, which is used for secure communication
             over networks. This option is required for most secure network protocols,
@@ -539,35 +541,44 @@ menu "mbedTLS"
         config MBEDTLS_SSL_PROTO_TLS1_2
             bool "Support TLS 1.2 protocol"
             depends on MBEDTLS_TLS_ENABLED
-            default y
+            default n
 
         config MBEDTLS_SSL_PROTO_TLS1_3
             bool "Support TLS 1.3 protocol"
             depends on MBEDTLS_TLS_ENABLED
             select MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
-            default n
+            default y
 
         menu "TLS 1.3 Configuration"
             depends on MBEDTLS_SSL_PROTO_TLS1_3
             config MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
                 depends on MBEDTLS_SSL_PROTO_TLS1_3
                 bool "TLS 1.3 middlebox compatibility mode"
-                default y
+                default n
+                help
+                    TLS 1.3 middlebox compatibility mode is not needed for server-only
+                    deployments. Disabled to save flash.
 
             config MBEDTLS_SSL_TLS1_3_KEXM_PSK
                 depends on MBEDTLS_SSL_PROTO_TLS1_3
                 bool "TLS 1.3 PSK key exchange mode"
-                default y
+                default n
+                help
+                    OPTIMIZATION: Disabled in favor of Keep-Alive for stateless server.
 
             config MBEDTLS_SSL_TLS1_3_KEXM_EPHEMERAL
                 depends on MBEDTLS_SSL_PROTO_TLS1_3
                 bool "TLS 1.3 ephemeral key exchange mode"
                 default y
+                help
+                    (ECDHE) - Essential for forward secrecy. Keep enabled.
 
             config MBEDTLS_SSL_TLS1_3_KEXM_PSK_EPHEMERAL
                 depends on MBEDTLS_SSL_PROTO_TLS1_3
                 bool "TLS 1.3 PSK ephemeral key exchange mode"
-                default y
+                default n
+                help
+                    OPTIMIZATION: Disabled in favor of Keep-Alive.
 
             config MBEDTLS_SSL_EARLY_DATA
                 depends on MBEDTLS_SSL_PROTO_TLS1_3
@@ -784,19 +795,23 @@ menu "mbedTLS"
 
         config MBEDTLS_CLIENT_SSL_SESSION_TICKETS
             bool "TLS: Client Support for RFC 5077 SSL session tickets"
-            default y
+            default n
             depends on MBEDTLS_TLS_ENABLED
             help
                 Client support for RFC 5077 session tickets. See mbedTLS documentation for more details.
                 Disabling this option will save some code size.
 
+                OPTIMIZATION: Disabled - use Keep-Alive for connection reuse instead.
+
         config MBEDTLS_SERVER_SSL_SESSION_TICKETS
             bool "TLS: Server Support for RFC 5077 SSL session tickets"
-            default y
+            default n
             depends on MBEDTLS_TLS_ENABLED && (MBEDTLS_GCM_C || MBEDTLS_CCM_C || MBEDTLS_CHACHAPOLY_C)
             help
                 Server support for RFC 5077 session tickets. See mbedTLS documentation for more details.
                 Disabling this option will save some code size.
+
+                OPTIMIZATION: Disabled - use Keep-Alive for connection reuse instead.
 
         config MBEDTLS_SSL_KEYING_MATERIAL_EXPORT
             bool "Enable keying material export"
@@ -1424,8 +1439,8 @@ menu "mbedTLS"
             help
                 Enable hardware accelerated AES encryption & decryption.
 
-                Note that if the ESP32 CPU is running at 240MHz, hardware AES does not
-                offer any speed boost over software AES.
+                Hardware AES provides significant performance improvement and reduces
+                CPU load for TLS operations, especially with TLS 1.3 AES-GCM.
 
         config MBEDTLS_HARDWARE_GCM
             bool "Enable partially hardware accelerated GCM"
@@ -1434,6 +1449,9 @@ menu "mbedTLS"
             help
                 Enable partially hardware accelerated GCM. GHASH calculation is still done
                 in software.
+
+                CRITICAL for TLS 1.3 performance: TLS 1.3 uses AES-GCM exclusively.
+                Hardware GCM acceleration significantly improves SSL/TLS throughput.
 
                 If MBEDTLS_HARDWARE_GCM is disabled and MBEDTLS_HARDWARE_AES is enabled then
                 mbedTLS will still use the hardware accelerated AES block operation, but

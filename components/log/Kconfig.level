@@ -2,7 +2,7 @@ menu "Log Level"
 
     choice LOG_DEFAULT_LEVEL
         bool "Default log verbosity"
-        default LOG_DEFAULT_LEVEL_INFO
+        default LOG_DEFAULT_LEVEL_WARN
         help
             Specify how much output to see in logs by default.
             You can set lower verbosity level at runtime using
@@ -14,6 +14,8 @@ menu "Log Level"
             "Warning" would mean that changing log level to "Debug"
             at runtime will not be possible. To allow increasing log
             level above the default at runtime, see the next option.
+
+            OPTIMIZATION: Changed from INFO to WARN to reduce flash/memory usage.
 
         config LOG_DEFAULT_LEVEL_NONE
             bool "No output"
